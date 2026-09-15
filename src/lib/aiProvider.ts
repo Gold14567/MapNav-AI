@@ -20,6 +20,11 @@ function cleanBaseUrl(value: string): string {
   return value.trim().replace(/\/+$/, '');
 }
 
+function openAIBaseUrl(value: string): string {
+  const cleaned = cleanBaseUrl(value);
+  return cleaned.endsWith('/v1') ? cleaned : `${cleaned}/v1`;
+}
+
 export function loadAISettings(): AISettings {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -46,11 +51,13 @@ export async function listAIModels(settings: AISettings): Promise<string[]> {
     if (!response.ok) throw new Error(`Ollama returned HTTP ${response.status}.`);
     const data = await response.json();
     return Array.isArray(data.models)
-      ? data.models.map((model: { name?: string }) => model.name).filter(Boolean)
+      ? data.models
+          .map((model: { name?: string }) => model.name)
+          .filter((name: string | undefined): name is string => Boolean(name))
       : [];
   }
 
-  const response = await fetch(`${baseUrl}/v1/models`, {
+  const response = await fetch(`${openAIBaseUrl(baseUrl)}/models`, {
     headers: settings.apiKey
       ? { Authorization: `Bearer ${settings.apiKey}` }
       : undefined,
@@ -58,7 +65,9 @@ export async function listAIModels(settings: AISettings): Promise<string[]> {
   if (!response.ok) throw new Error(`AI server returned HTTP ${response.status}.`);
   const data = await response.json();
   return Array.isArray(data.data)
-    ? data.data.map((model: { id?: string }) => model.id).filter(Boolean)
+    ? data.data
+        .map((model: { id?: string }) => model.id)
+        .filter((id: string | undefined): id is string => Boolean(id))
     : [];
 }
 
@@ -110,7 +119,7 @@ export async function analyzeMapWithAI(
     return data.message?.content || data.response || 'AI returned no text.';
   }
 
-  const response = await fetch(`${baseUrl}/v1/chat/completions`, {
+  const response = await fetch(`${openAIBaseUrl(baseUrl)}/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
