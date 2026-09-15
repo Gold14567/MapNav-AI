@@ -157,16 +157,13 @@ function App() {
     <div className="flex h-screen flex-col bg-ink-950">
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Header */}
       <header className="z-10 flex items-center justify-between border-b border-ink-800 px-6 py-3">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent-500 to-road-500">
             <Compass className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="font-display text-base font-bold text-white">
-              MapNav AI
-            </h1>
+            <h1 className="font-display text-base font-bold text-white">MapNav AI</h1>
             <p className="text-xs text-ink-500">Road Detection & Navigation</p>
           </div>
         </div>
@@ -182,7 +179,6 @@ function App() {
         </div>
       </header>
 
-      {/* Main content */}
       {!imageUrl ? (
         <div className="flex flex-1 items-center justify-center overflow-y-auto px-6 py-8">
           <div className="w-full max-w-2xl">
@@ -195,9 +191,7 @@ function App() {
                 Upload a map. Get navigation data.
               </h2>
               <p className="mt-3 text-base text-ink-400">
-                Our computer vision pipeline detects roads from any map image,
-                builds a routable graph, and generates turn-by-turn navigation
-                — all in your browser. No GPS, no external maps needed.
+                Detect roads locally, or connect MapNav to Ollama or another OpenAI-compatible AI server for vision analysis.
               </p>
             </div>
             <ImageUploader
@@ -205,6 +199,9 @@ function App() {
               hasImage={false}
               onClear={handleClear}
             />
+            <div className="mt-6 overflow-hidden rounded-xl border border-ink-800 bg-ink-900/30">
+              <AIProviderPanel imageUrl={null} />
+            </div>
             <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
               <FeatureCard
                 icon="scan"
@@ -226,7 +223,6 @@ function App() {
         </div>
       ) : (
         <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_360px]">
-          {/* Map area */}
           <div className="relative min-h-0 min-w-0">
             <MapView
               imageUrl={imageUrl}
@@ -247,7 +243,6 @@ function App() {
             {isProcessing && <ProcessingOverlay stage={processingStage} />}
           </div>
 
-          {/* Side panel */}
           <aside className="flex min-h-0 min-w-0 flex-col overflow-hidden border-l border-ink-800 bg-ink-900/30">
             <div className="border-b border-ink-800 px-5 py-4">
               <ImageUploader
@@ -321,9 +316,7 @@ function FeatureCard({
       <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-ink-800">
         <Icon className="h-4 w-4 text-accent-400" />
       </div>
-      <h3 className="mb-1 font-display text-sm font-semibold text-white">
-        {title}
-      </h3>
+      <h3 className="mb-1 font-display text-sm font-semibold text-white">{title}</h3>
       <p className="text-xs text-ink-400">{desc}</p>
     </div>
   );
