@@ -83,13 +83,44 @@ export interface DetectionParams {
   intersectionThreshold: number;
 }
 
+export type DetectionMode = 'fast' | 'balanced' | 'accurate' | 'custom';
+
+export const DETECTION_PRESETS: Record<
+  Exclude<DetectionMode, 'custom'>,
+  DetectionParams
+> = {
+  fast: {
+    blurRadius: 1,
+    edgeThreshold: 28,
+    houghThreshold: 0.35,
+    minSegmentLength: 24,
+    gapThreshold: 8,
+    mergeAngleTolerance: 0.12,
+    mergeDistanceTolerance: 14,
+    intersectionThreshold: 10,
+  },
+  balanced: {
+    blurRadius: 1,
+    edgeThreshold: 20,
+    houghThreshold: 0.25,
+    minSegmentLength: 15,
+    gapThreshold: 12,
+    mergeAngleTolerance: 0.15,
+    mergeDistanceTolerance: 18,
+    intersectionThreshold: 12,
+  },
+  accurate: {
+    blurRadius: 1,
+    edgeThreshold: 15,
+    houghThreshold: 0.18,
+    minSegmentLength: 10,
+    gapThreshold: 16,
+    mergeAngleTolerance: 0.18,
+    mergeDistanceTolerance: 22,
+    intersectionThreshold: 14,
+  },
+};
+
 export const DEFAULT_PARAMS: DetectionParams = {
-  blurRadius: 1,
-  edgeThreshold: 20,
-  houghThreshold: 0.25,
-  minSegmentLength: 15,
-  gapThreshold: 12,
-  mergeAngleTolerance: 0.15,
-  mergeDistanceTolerance: 18,
-  intersectionThreshold: 12,
+  ...DETECTION_PRESETS.balanced,
 };
