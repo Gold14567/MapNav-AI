@@ -17,12 +17,13 @@ import { detectRoads } from '@/lib/detection';
 import { findNearestNode, aStarPathfinding, buildNavigationRoute } from '@/lib/navigation';
 import type {
   DetectionResult,
+  DetectionMode,
   DetectionParams,
   NavigationRoute,
   Point,
   ProcessingStage,
 } from '@/lib/types';
-import { DEFAULT_PARAMS } from '@/lib/types';
+import { DEFAULT_PARAMS, DETECTION_PRESETS } from '@/lib/types';
 
 function App() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -34,11 +35,19 @@ function App() {
   const [selectingMode, setSelectingMode] = useState<'start' | 'end' | null>(null);
   const [route, setRoute] = useState<NavigationRoute | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [detectionMode, setDetectionMode] = useState<DetectionMode>('balanced');
   const [params, setParams] = useState<DetectionParams>(DEFAULT_PARAMS);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const isProcessing =
     processingStage !== 'idle' && processingStage !== 'complete';
+
+  const handleDetectionModeChange = useCallback((mode: DetectionMode) => {
+    setDetectionMode(mode);
+    if (mode !== 'custom') {
+      setParams({ ...DETECTION_PRESETS[mode] });
+    }
+  }, []);
 
   const runDetection = useCallback(
     async (data: ImageData) => {
@@ -162,7 +171,7 @@ function App() {
         </div>
         <div className="flex items-center gap-2">
           <a
-            href="https://github.com"
+            href="https://github.com/Gold14567/MapNav-AI"
             target="_blank"
             rel="noreferrer"
             className="flex h-9 w-9 items-center justify-center rounded-xl border border-ink-700 text-ink-300 transition-all hover:border-ink-500 hover:text-white"
@@ -248,7 +257,9 @@ function App() {
             </div>
 
             <SettingsPanel
+              mode={detectionMode}
               params={params}
+              onModeChange={handleDetectionModeChange}
               onChange={setParams}
               onReprocess={handleReprocess}
               hasImage={!!imageUrl}
