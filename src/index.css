@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+  }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #0d0f14;
+    color: #eceef2;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgba(26, 30, 38, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-accent-500 px-5 py-3 font-semibold text-white transition-all hover:bg-accent-400 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-ink-700 px-4 py-2.5 font-medium text-ink-200 transition-all hover:border-ink-500 hover:text-white active:scale-[0.98];
+  }
+}
+
+/* Leaflet dark theme overrides */
+.leaflet-container {
+  background: #0d0f14;
+  font-family: 'Inter', sans-serif;
+}
+.leaflet-control-attribution {
+  background: rgba(13, 15, 20, 0.7) !important;
+  color: #65728a !important;
+}
+.leaflet-control-attribution a {
+  color: #8492a8 !important;
+}
+.leaflet-bar a {
+  background: rgba(26, 30, 38, 0.9) !important;
+  color: #eceef2 !important;
+  border-color: #39404d !important;
+}
+.leaflet-bar a:hover {
+  background: rgba(57, 64, 77, 0.9) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #39404d;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #515c70;
+}
