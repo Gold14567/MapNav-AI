@@ -7,6 +7,7 @@ import {
   Network,
   Route,
 } from 'lucide-react';
+import { AIProviderPanel } from '@/components/AIProviderPanel';
 import { ImageUploader } from '@/components/ImageUploader';
 import { MapView } from '@/components/MapView';
 import { NavigationPanel } from '@/components/NavigationPanel';
@@ -255,6 +256,8 @@ function App() {
                 onClear={handleClear}
               />
             </div>
+
+            <AIProviderPanel imageUrl={imageUrl} />
 
             <SettingsPanel
               mode={detectionMode}
