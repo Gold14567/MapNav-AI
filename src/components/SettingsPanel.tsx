@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Sliders, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
-import type { DetectionParams } from '@/lib/types';
-import { DEFAULT_PARAMS } from '@/lib/types';
+import type { DetectionMode, DetectionParams } from '@/lib/types';
 
 interface SettingsPanelProps {
+  mode: DetectionMode;
   params: DetectionParams;
+  onModeChange: (mode: DetectionMode) => void;
   onChange: (params: DetectionParams) => void;
   onReprocess: () => void;
   hasImage: boolean;
@@ -19,6 +20,28 @@ interface SliderConfig {
   step: number;
   hint: string;
 }
+
+const MODE_OPTIONS: Array<{
+  mode: Exclude<DetectionMode, 'custom'>;
+  label: string;
+  hint: string;
+}> = [
+  {
+    mode: 'fast',
+    label: 'Fast',
+    hint: 'Faster processing with stricter road filtering.',
+  },
+  {
+    mode: 'balanced',
+    label: 'Balanced',
+    hint: 'Best default mix of speed and road coverage.',
+  },
+  {
+    mode: 'accurate',
+    label: 'Accurate',
+    hint: 'Detects more roads and small segments with extra processing.',
+  },
+];
 
 const SLIDERS: SliderConfig[] = [
   {
@@ -88,7 +111,9 @@ const SLIDERS: SliderConfig[] = [
 ];
 
 export function SettingsPanel({
+  mode,
   params,
+  onModeChange,
   onChange,
   onReprocess,
   hasImage,
@@ -107,6 +132,9 @@ export function SettingsPanel({
           <span className="text-sm font-semibold text-white">
             AI Detection Settings
           </span>
+          <span className="rounded-md bg-ink-800 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-400">
+            {mode}
+          </span>
         </div>
         {expanded ? (
           <ChevronUp className="h-4 w-4 text-ink-400" />
@@ -117,39 +145,82 @@ export function SettingsPanel({
 
       {expanded && (
         <div className="animate-fade-in space-y-4 px-5 pb-4">
-          {SLIDERS.map((slider) => (
-            <div key={slider.key}>
-              <div className="mb-1 flex items-center justify-between">
-                <label className="text-xs font-medium text-ink-200">
-                  {slider.label}
-                </label>
-                <span className="rounded-md bg-ink-800 px-2 py-0.5 text-xs font-mono text-accent-400">
-                  {params[slider.key]}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-xs font-medium text-ink-200">Detection Mode</span>
+              {mode === 'custom' && (
+                <span className="text-[10px] font-medium text-road-400">
+                  Custom tuning
                 </span>
-              </div>
-              <input
-                type="range"
-                min={slider.min}
-                max={slider.max}
-                step={slider.step}
-                value={params[slider.key]}
-                onChange={(e) =>
-                  onChange({
-                    ...params,
-                    [slider.key]: parseFloat(e.target.value),
-                  })
-                }
-                className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-ink-700 accent-accent-500"
-              />
-              <p className="mt-0.5 text-[10px] leading-tight text-ink-500">
-                {slider.hint}
-              </p>
+              )}
             </div>
-          ))}
+            <div className="grid grid-cols-3 gap-2">
+              {MODE_OPTIONS.map((option) => {
+                const active = mode === option.mode;
+                return (
+                  <button
+                    key={option.mode}
+                    type="button"
+                    onClick={() => onModeChange(option.mode)}
+                    className={`rounded-lg border px-2 py-2 text-xs font-semibold transition-all ${
+                      active
+                        ? 'border-accent-500 bg-accent-500/15 text-accent-300'
+                        : 'border-ink-700 bg-ink-900/60 text-ink-300 hover:border-ink-500 hover:text-white'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-2 text-[10px] leading-tight text-ink-500">
+              {mode === 'custom'
+                ? 'Manual slider changes are active. Choose a preset to restore tuned values.'
+                : MODE_OPTIONS.find((option) => option.mode === mode)?.hint}
+            </p>
+          </div>
+
+          <div className="border-t border-ink-800 pt-4">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-ink-500">
+              Advanced tuning
+            </p>
+            <div className="space-y-4">
+              {SLIDERS.map((slider) => (
+                <div key={slider.key}>
+                  <div className="mb-1 flex items-center justify-between">
+                    <label className="text-xs font-medium text-ink-200">
+                      {slider.label}
+                    </label>
+                    <span className="rounded-md bg-ink-800 px-2 py-0.5 text-xs font-mono text-accent-400">
+                      {params[slider.key]}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={slider.min}
+                    max={slider.max}
+                    step={slider.step}
+                    value={params[slider.key]}
+                    onChange={(e) => {
+                      onModeChange('custom');
+                      onChange({
+                        ...params,
+                        [slider.key]: parseFloat(e.target.value),
+                      });
+                    }}
+                    className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-ink-700 accent-accent-500"
+                  />
+                  <p className="mt-0.5 text-[10px] leading-tight text-ink-500">
+                    {slider.hint}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
 
           <div className="flex gap-2 pt-1">
             <button
-              onClick={() => onChange({ ...DEFAULT_PARAMS })}
+              onClick={() => onModeChange('balanced')}
               className="btn-ghost flex-1 text-xs"
             >
               <RotateCcw className="h-3 w-3" />
