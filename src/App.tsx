@@ -243,7 +243,7 @@ function App() {
             {isProcessing && <ProcessingOverlay stage={processingStage} />}
           </div>
 
-          <aside className="flex min-h-0 min-w-0 flex-col overflow-hidden border-l border-ink-800 bg-ink-900/30">
+          <aside className="flex min-h-0 min-w-0 flex-col overflow-scroll border-l border-ink-800 bg-ink-900/30">
             <div className="border-b border-ink-800 px-5 py-4">
               <ImageUploader
                 onImageUpload={handleImageUpload}
