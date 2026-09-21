@@ -92,7 +92,7 @@ export async function analyzeMapWithAI(
 
   const dataUrl = await imageUrlToDataUrl(imageUrl);
   const prompt =
-    'Analyze this uploaded map image for MapNav. Describe the visible road layout, major intersections, bridges, coastlines or water boundaries, and any navigation-relevant visual landmarks. Be concise and do not invent coordinates that are not visible.';
+    'Analyze this uploaded map image for map navigation. find the visible road layout, major intersections, bridges, coastlines or water boundaries, and any navigation-relevant visual landmarks. Be concise and do not invent coordinates that are not visible. And turn this into a navigation file for leaflet';
 
   if (settings.provider === 'ollama') {
     const base64 = dataUrl.split(',')[1] || '';
